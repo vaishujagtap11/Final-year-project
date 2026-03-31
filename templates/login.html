@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script>
+        function startWebcam() {
+            let video = document.getElementById('webcam');
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("Error accessing webcam: ", err);
+                });
+        }
+
+        function captureAndSubmit() {
+            let video = document.getElementById('webcam');
+            let canvas = document.createElement('canvas');
+            canvas.width = 320;  // Reduce resolution
+            canvas.height = 240;
+            let ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert image to compressed Base64 (JPEG with 50% quality)
+            let imageData = canvas.toDataURL('image/jpeg', 0.5);
+            document.getElementById('captured_image').value = imageData;
+
+            document.getElementById('loginForm').submit();
+        }
+    </script>
+</head>
+<body onload="startWebcam()">
+    <h1>Login Page</h1>
+    <form id="loginForm" action="/login" method="post">
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <h3>Live Face Authentication</h3>
+        <video id="webcam" width="320" height="240" autoplay></video><br>
+        
+        <input type="hidden" name="captured_image" id="captured_image">
+        <br><br>
+        <button type="button" onclick="captureAndSubmit()">Login</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

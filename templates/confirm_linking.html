@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Confirm Account Linking</title>
+</head>
+<body>
+    <h2>Face Already Registered</h2>
+    <p>Your face is already linked to an existing account with the email: <strong>{{ existing_email }}</strong></p>
+    <p>Would you like to link your new email to this account?</p>
+    
+    <form action="{{ url_for('confirm_linking') }}" method="post">
+        <button type="submit" name="choice" value="yes">Yes, link my accounts</button>
+        <button type="submit" name="choice" value="no">No, cancel signup</button>
+    </form>
+</body>
+</html>
